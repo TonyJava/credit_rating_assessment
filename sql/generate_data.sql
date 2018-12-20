@@ -176,12 +176,12 @@ BEGIN
 
     -- 插入用户操作
     SET @rn_opt = 0;
-    SET @opt_cnt = FLOOR(1 + RAND() * 9);
+    SET @opt_cnt = FLOOR(RAND() * 9);
     WHILE(@rn_opt < @opt_cnt) DO
 
-      SET @opt_type = FLOOR(1 + RAND() * 9);
+      SET @opt_type = FLOOR(1 + RAND() * 8);
       SET @diff = TIMESTAMPDIFF(MINUTE,@pre_login,@pre_logout);
-      SET @diff_minute = FLOOR( 1 + RAND() * @diff);
+      SET @diff_minute = FLOOR(1 + RAND() * @diff);
       SET @opt_time = DATE_ADD(@pre_login,INTERVAL @diff_minute MINUTE);
 
       INSERT
@@ -208,13 +208,53 @@ END //
 DELIMITER //
 DROP EVENT IF EXISTS e_user_credit_add//
 CREATE EVENT e_user_credit_add
-  ON SCHEDULE EVERY 1 MINUTE STARTS TIMESTAMP '2018-12-19 12:00:00' -- 设置每秒，根据自己需要进行设定
+  ON SCHEDULE EVERY 1 SECOND STARTS TIMESTAMP '2018-12-19 12:00:00' -- 设置每秒，根据自己需要进行设定
   ON COMPLETION PRESERVE
 DO
 BEGIN
-  CALL usp_create_user(10);
-  CALL usp_create_login(10);
+#   CALL usp_create_user(1000);
+  CALL usp_create_login(10000);
 END //
 
 
+
+-- 其他操作
+
 select count(1) from US_User;
+select count(1) from US_Login;
+select count(1) from US_OperationLog;
+
+select distinct OptType from US_OperationLog;
+delete from US_OperationLog where OptType = 0;
+
+
+-- 数据生成一定量后，需要对一些表数据进行排序
+ALTER TABLE US_Login RENAME TO US_Login_2;
+ALTER TABLE US_OperationLog RENAME TO US_OperationLog_2;
+
+create table US_Login
+as
+select *
+from US_Login_2
+order by SignInTime asc;
+drop table US_Login_2;
+
+create table US_OperationLog
+as
+select *
+from US_OperationLog_2
+order by OptTime asc;
+drop table US_OperationLog_2;
+
+
+-- 4028
+select count(distinct date_format(SignInTime, '%Y-%m-%d')) from US_Login;
+select count(distinct date_format(OptTime, '%Y-%m-%d')) from US_OperationLog;
+-- 13
+select count(distinct date_format(SignInTime, '%Y-%m')) from US_Login;
+select count(distinct date_format(OptTime, '%Y-%m')) from US_OperationLog;
+-- 12
+select count(distinct date_format(SignInTime, '%Y')) from US_Login;
+select count(distinct date_format(OptTime, '%Y')) from US_OperationLog;
+
+delete from US_OperationLog where OptType = '9';
