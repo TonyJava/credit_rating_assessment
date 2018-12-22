@@ -1,0 +1,3 @@
+type=command
+year=$(${azkaban.flow.start.year} - 1)
+command=java -jar credit_rating.jar cn.goldlone.credit.analysis.ScoreAnnual -d ${year}
