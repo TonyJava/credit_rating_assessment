@@ -34,6 +34,26 @@ class DBUtil {
   }
   
   /**
+    * 执行指定的SQL
+    * @param sql 需要执行的sql
+    */
+  def execute(sql: String, objects: Array[Any]): Unit = {
+    try {
+      this.connection = DBUtil.getConnection
+      this.preparedStatement = this.connection.prepareStatement(sql)
+      if(objects != null)
+        this.setPreparedStatement(objects)
+      
+      this.preparedStatement.execute()
+    } catch {
+      case e: Exception => e.printStackTrace()
+    } finally {
+      DBUtil.returnConnection(this.connection)
+      this.connection == null
+    }
+  }
+  
+  /**
     * 添加记录并返回主键
     * @param sql
     * @param objects

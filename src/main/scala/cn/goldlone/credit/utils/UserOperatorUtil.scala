@@ -55,18 +55,34 @@ object UserOperatorUtil {
     // 匹配操作
     scoreType match {
       case ScoreType.LOGIN => // 登录累积积分
+        // 计算总积分
         sql = "insert " +
             "into US_Score(UserId, OnlineScore, VipScore, CreateTime) " +
             "values(?, ?, ?, now()) " +
             "on duplicate key update OnlineScore = OnlineScore + ?, " +
             "   VipScore = VipScore + ? "
         dbUtil.executeInsertOrUpdate(sql, Array(userId, incScore, incVipScore, incScore, incVipScore))
+        // 计算日积分
+        sql = "insert " +
+            "into US_DailyScoreLog(UserId, Day, OnlineScore, VipScore) " +
+            "values(?, now(), ?, ?) " +
+            "on duplicate key update OnlineScore = OnlineScore + ?, " +
+            "   VipScore = VipScore + ? "
+        dbUtil.executeInsertOrUpdate(sql, Array(userId, incScore, incVipScore, incScore, incVipScore))
         totalScore += incScore + incVipScore
         
       case ScoreType.BUDDY => // 好友积分累积
+        // 计算总积分
         sql = "insert " +
             "into US_Score(UserId, BuddyScore, VipScore, CreateTime) " +
             "values(?, ?, ?, now()) " +
+            "on duplicate key update BuddyScore = BuddyScore + ?, " +
+            "   VipScore = VipScore + ? "
+        dbUtil.executeInsertOrUpdate(sql, Array(userId, incScore, incVipScore, incScore, incVipScore))
+        // 计算日积分
+        sql = "insert " +
+            "into US_DailyScoreLog(UserId, Day, BuddyScore, VipScore) " +
+            "values(?, now(), ?, ?) " +
             "on duplicate key update BuddyScore = BuddyScore + ?, " +
             "   VipScore = VipScore + ? "
         dbUtil.executeInsertOrUpdate(sql, Array(userId, incScore, incVipScore, incScore, incVipScore))
@@ -79,13 +95,26 @@ object UserOperatorUtil {
             "on duplicate key update BussinessScore = BussinessScore + ?, " +
             "   VipScore = VipScore + ? "
         dbUtil.executeInsertOrUpdate(sql, Array(userId, incScore, incVipScore, incScore, incVipScore))
+        sql = "insert " +
+            "into US_DailyScoreLog(UserId, Day, BusinessScore, VipScore) " +
+            "values(?, now(), ?, ?) " +
+            "on duplicate key update BusinessScore = BusinessScore + ?, " +
+            "   VipScore = VipScore + ? "
+        dbUtil.executeInsertOrUpdate(sql, Array(userId, incScore, incVipScore, incScore, incVipScore))
         totalScore += incScore + incVipScore
         
       case ScoreType.VIP_FIRST => // 首次VIP
         if(identity == IdentityType.GENERAL_USER) {
+          // 计算总积分
           sql = "insert " +
               "into US_Score(UserId, VipScore, CreateTime) " +
               "values(?, ?, now()) " +
+              "on duplicate key update VipScore = VipScore + ? "
+          dbUtil.executeInsertOrUpdate(sql, Array(userId, incScore, incScore))
+          // 计算日积分
+          sql = "insert " +
+              "into US_DailyScoreLog(UserId, Day, VipScore) " +
+              "values(?, now(), ?) " +
               "on duplicate key update VipScore = VipScore + ? "
           dbUtil.executeInsertOrUpdate(sql, Array(userId, incScore, incScore))
           totalScore += incScore
@@ -102,6 +131,11 @@ object UserOperatorUtil {
         sql = "insert " +
             "into US_Score(UserId, VipScore, CreateTime) " +
             "values(?, ?, now()) " +
+            "on duplicate key update VipScore = VipScore + ? "
+        dbUtil.executeInsertOrUpdate(sql, Array(userId, incScore, incScore))
+        sql = "insert " +
+            "into US_DailyScoreLog(UserId, Day, VipScore) " +
+            "values(?, now(), ?) " +
             "on duplicate key update VipScore = VipScore + ? "
         dbUtil.executeInsertOrUpdate(sql, Array(userId, incScore, incScore))
   
