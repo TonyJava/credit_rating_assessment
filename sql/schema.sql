@@ -111,9 +111,10 @@ create table US_Consume (
 create table US_DailyScoreLog (
   UserId	bigint comment '用户内部ID',
   Day	Date comment '日期',
-  OnlineScore	Decimal(9,1) comment '在线积分',
-  BuddyScore	Decimal(9,1) comment '好友积分',
-  VipScore	Decimal(9,1) comment 'Vip积分',
+  OnlineScore	Decimal(9,1) default 0 comment '在线积分',
+  BuddyScore	Decimal(9,1) default 0 comment '好友积分',
+  BusinessScore	Decimal(9,1) default 0 comment '业务积分',
+  VipScore	Decimal(9,1) default 0 comment 'Vip积分',
   primary key (UserId, Day)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='日积分历史表';
 
@@ -121,23 +122,26 @@ create table US_DailyScoreLog (
 -- 9. US_MonthlyScoreLog 月积分历史表
 create table US_MonthlyScoreLog (
   UserId	bigint comment '用户内部ID',
-  Time	Datetime comment '月份',
-  OnlineScore	Decimal(9,1) comment '在线积分',
-  BuddyScore	Decimal(9,1) comment '好友积分',
-  VipScore	Decimal(9,1) comment 'Vip积分',
-  primary key (UserId, Time)
+  year int comment '年份',
+  month	int comment '月份',
+  OnlineScore	Decimal(9,1) default 0 comment '在线积分',
+  BuddyScore	Decimal(9,1) default 0 comment '好友积分',
+  BusinessScore	Decimal(9,1) default 0 comment '业务积分',
+  VipScore	Decimal(9,1) default 0 comment 'Vip积分',
+  primary key (UserId, year, month)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='月积分历史表';
 
 
 -- 10. US_YearlyScoreLog 年积分历史表
 create table US_YearlyScoreLog (
   UserId	bigint comment '用户内部ID',
-  Time	Int comment '年份',
+  year	Int comment '年份',
   AvailableScore	Decimal(9,1) comment '当前年份可消费积分',
-  OnlineScore	Decimal(9,1) comment '在线积分',
-  BuddyScore	Decimal(9,1) comment '好友积分',
-  VipScore	Decimal(9,1) comment 'Vip积分',
-  primary key (UserId, Time)
+  OnlineScore	Decimal(9,1) default 0 comment '在线积分',
+  BuddyScore	Decimal(9,1) default 0 comment '好友积分',
+  BusinessScore	Decimal(9,1) default 0 comment '业务积分',
+  VipScore	Decimal(9,1) default 0 comment 'Vip积分',
+  primary key (UserId, year)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='年积分历史表';
 
 
