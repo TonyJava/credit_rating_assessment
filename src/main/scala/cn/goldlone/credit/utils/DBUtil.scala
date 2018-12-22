@@ -219,7 +219,7 @@ object DBUtil {
     * 从连接池中获取一个Connection
     * @return
     */
-  private def getConnection: Connection = {
+  def getConnection: Connection = {
     pool.take()
   }
   
@@ -228,7 +228,7 @@ object DBUtil {
     * 向连接池归还一个Connection
     * @param conn
     */
-  private def returnConnection(conn: Connection): Unit = {
+  def returnConnection(conn: Connection): Unit = {
     DBUtil.pool.put(conn)
   }
   

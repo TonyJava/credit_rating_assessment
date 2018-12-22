@@ -237,9 +237,8 @@ create table US_ProcessLogSecurityPolicy (
 -- 18. US_Credit 用户信用分值表
 create table US_Credit (
   UserId	bigint,
-  Time	datetime,
   CreditScore	Decimal(18,2),
-  primary key (UserId, Time)
+  primary key (UserId)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT COMMENT='用户信用分值表';
 
 
